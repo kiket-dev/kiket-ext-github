@@ -1,0 +1,155 @@
+id: dev.kiket.ext.github
+name: "GitHub Integration"
+version: "1.0.0"
+description: "GitHub integration for PR tracking, issue mirroring, and workflow automation"
+author: "Kiket"
+homepage: "https://github.com/kiket-dev/kiket-ext-github"
+icon: "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
+
+api:
+  base_url: "{{EXTENSION_BASE_URL}}"
+  health_endpoint: "/health"
+  timeout_seconds: 30
+
+webhooks:
+  - event: "issue.transitioned"
+    endpoint: "/webhooks/kiket/issue_transitioned"
+    description: "Sync issue status changes to GitHub"
+
+  - event: "issue.created"
+    endpoint: "/webhooks/kiket/issue_created"
+    description: "Create GitHub issue when Kiket issue is created"
+
+  - event: "issue.commented"
+    endpoint: "/webhooks/kiket/issue_commented"
+    description: "Sync comments to GitHub issues"
+
+github_webhooks:
+  endpoint: "/webhooks/github"
+  events:
+    - "pull_request"
+    - "pull_request_review"
+    - "check_suite"
+    - "check_run"
+    - "issues"
+    - "issue_comment"
+    - "push"
+    - "create"
+    - "delete"
+    - "release"
+  secret_env: "GITHUB_WEBHOOK_SECRET"
+
+commands:
+  - id: "github.syncRepository"
+    title: "Sync GitHub Repository"
+    description: "Trigger a full sync of a GitHub repository"
+    category: "GitHub"
+
+  - id: "github.linkPR"
+    title: "Link Pull Request"
+    description: "Link a GitHub PR to this issue"
+    category: "GitHub"
+    context: "issue"
+
+  - id: "github.createIssue"
+    title: "Create GitHub Issue"
+    description: "Create a GitHub issue from this Kiket issue"
+    category: "GitHub"
+    context: "issue"
+
+  - id: "github.viewPR"
+    title: "View Linked PRs"
+    description: "View pull requests linked to this issue"
+    category: "GitHub"
+    context: "issue"
+
+  - id: "github.exportMetrics"
+    title: "Export PR Metrics"
+    description: "Export pull request metrics as CSV"
+    category: "GitHub"
+
+custom_data:
+  modules:
+    - github_data
+
+secrets:
+  - name: "GITHUB_APP_ID"
+    description: "GitHub App ID for authentication"
+    required: true
+
+  - name: "GITHUB_APP_PRIVATE_KEY"
+    description: "GitHub App private key (PEM format)"
+    required: true
+    secret: true
+
+  - name: "GITHUB_WEBHOOK_SECRET"
+    description: "Secret for verifying GitHub webhook signatures"
+    required: true
+    secret: true
+
+  - name: "GITHUB_INSTALLATION_ID"
+    description: "GitHub App installation ID for your organization"
+    required: false
+
+rate_limiting:
+  requests_per_minute: 60
+  burst: 20
+
+dependencies:
+  - kiket_version: ">=1.0.0"
+
+permissions:
+  - scope: "issues"
+    actions: ["read", "write"]
+    description: "Required for issue mirroring and PR linking"
+
+  - scope: "comments"
+    actions: ["read", "write"]
+    description: "Required for comment synchronization"
+
+  - scope: "projects"
+    actions: ["read"]
+    description: "Required for project-level repository configuration"
+
+settings:
+  - name: "default_sync_mode"
+    type: "select"
+    label: "Default Sync Mode"
+    description: "Default synchronization behavior for new repositories"
+    options:
+      - value: "full"
+        label: "Full Sync (Issues + PRs)"
+      - value: "prs_only"
+        label: "PRs Only"
+      - value: "issues_only"
+        label: "Issues Only"
+      - value: "disabled"
+        label: "Disabled"
+    default: "full"
+
+  - name: "auto_link_commits"
+    type: "boolean"
+    label: "Auto-link Commits"
+    description: "Automatically link commits to Kiket issues based on commit messages"
+    default: true
+
+  - name: "pr_status_sync"
+    type: "boolean"
+    label: "Sync PR Status"
+    description: "Keep PR checks and review status synchronized"
+    default: true
+
+  - name: "webhook_retry_count"
+    type: "number"
+    label: "Webhook Retry Count"
+    description: "Number of times to retry failed webhook deliveries"
+    default: 3
+    min: 0
+    max: 10
+
+tags:
+  - "integration"
+  - "github"
+  - "version-control"
+  - "pull-requests"
+  - "issue-tracking"

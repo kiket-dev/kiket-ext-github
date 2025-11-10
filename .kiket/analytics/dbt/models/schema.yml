@@ -1,0 +1,64 @@
+version: 2
+
+models:
+  - name: pr_metrics_daily
+    description: "Daily aggregated pull request metrics per repository"
+    columns:
+      - name: repo_id
+        description: "Repository ID"
+      - name: metric_date
+        description: "Date of metrics"
+      - name: prs_opened
+        description: "Number of PRs opened on this date"
+      - name: prs_merged
+        description: "Number of PRs merged"
+      - name: prs_closed_unmerged
+        description: "Number of PRs closed without merging"
+      - name: avg_time_to_merge_hours
+        description: "Average time from PR creation to merge in hours"
+      - name: avg_reviews
+        description: "Average number of reviews per PR"
+      - name: merge_rate_pct
+        description: "Percentage of PRs that were merged"
+      - name: check_success_rate_pct
+        description: "Percentage of PRs with passing checks"
+
+  - name: repository_summary
+    description: "Summary statistics per repository"
+    columns:
+      - name: repo_id
+        description: "Repository ID"
+      - name: repository
+        description: "Full repository name (owner/repo)"
+      - name: kiket_project_id
+        description: "Associated Kiket project"
+      - name: total_prs
+        description: "Total number of pull requests"
+      - name: merged_prs
+        description: "Number of merged PRs"
+      - name: open_prs
+        description: "Number of currently open PRs"
+      - name: unique_contributors
+        description: "Number of unique PR authors"
+      - name: mapped_issues
+        description: "Number of GitHub issues mapped to Kiket"
+      - name: avg_merge_time_hours
+        description: "Average time to merge PRs in hours"
+      - name: merge_rate_pct
+        description: "Percentage of PRs merged"
+
+  - name: webhook_reliability
+    description: "GitHub webhook delivery success rates by event type"
+    columns:
+      - name: delivery_date
+        description: "Date of webhook deliveries"
+      - name: event_type
+        description: "GitHub event type"
+      - name: total_deliveries
+        description: "Total webhook deliveries received"
+      - name: successful_deliveries
+        description: "Successfully processed deliveries"
+      - name: failed_deliveries
+        description: "Failed deliveries"
+      - name: success_rate_pct
+        description: "Percentage of successful deliveries"

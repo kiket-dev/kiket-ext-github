@@ -282,7 +282,7 @@ class GitHubExtension < Sinatra::Base
   end
 
   get "/webhooks/deliveries" do
-    limit = [params.fetch("limit", "50").to_i, 100].min
+    limit = [ params.fetch("limit", "50").to_i, 100 ].min
     offset = params.fetch("offset", "0").to_i
 
     deliveries = settings.webhook_deliveries.reverse[offset, limit] || []
@@ -340,7 +340,7 @@ class GitHubExtension < Sinatra::Base
   get "/sync/jobs" do
     repo_key = params["repository"]
     status_filter = params["status"]
-    limit = [params.fetch("limit", "20").to_i, 100].min
+    limit = [ params.fetch("limit", "20").to_i, 100 ].min
 
     jobs = settings.sync_jobs
     jobs = jobs.select { |j| j[:repository] == repo_key } if repo_key
@@ -620,7 +620,7 @@ class GitHubExtension < Sinatra::Base
     repo_key = repo["full_name"]
 
     return unless settings.repositories[repo_key]
-    return unless settings.repositories[repo_key][:auto_link]
+    nil unless settings.repositories[repo_key][:auto_link]
 
     # Extract issue references from commit messages
     # Would link commits to Kiket issues here
@@ -633,7 +633,7 @@ class GitHubExtension < Sinatra::Base
 
     repo_key = repo["full_name"]
 
-    return unless settings.repositories[repo_key]
+    nil unless settings.repositories[repo_key]
 
     # Track branch/tag creation/deletion
   end
@@ -645,7 +645,7 @@ class GitHubExtension < Sinatra::Base
 
     repo_key = repo["full_name"]
 
-    return unless settings.repositories[repo_key]
+    nil unless settings.repositories[repo_key]
 
     # Track release events
   end

@@ -1,0 +1,27 @@
+title: Mirror Issues to GitHub
+description: Create GitHub issues when Kiket issues are created, keeping them synchronized
+
+automations:
+  - name: mirror_to_github
+    trigger:
+      event: issue.created
+      conditions:
+        - field: issue.type
+          operator: in
+          value: [Bug, Task]
+        - field: project.settings.github_repo
+          operator: not_empty
+    actions:
+      - extension: dev.kiket.ext.github
+        command: github.createIssue
+        params:
+          repository: "{{ project.settings.github_repo }}"
+          title: "[{{ issue.key }}] {{ issue.title }}"
+          body: |
+            {{ issue.description }}
+
+            ---
+            *Synced from Kiket: [{{ issue.key }}]({{ issue.url }})*
+          labels:
+            - "from-kiket"
+            - "{{ issue.type | downcase }}"

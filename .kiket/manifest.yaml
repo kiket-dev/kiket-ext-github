@@ -1,157 +1,259 @@
-id: dev.kiket.ext.github
-name: "GitHub Integration"
-version: "1.0.0"
-description: "GitHub integration for PR tracking, issue mirroring, and workflow automation"
-author: "Kiket"
-homepage: "https://github.com/kiket-dev/kiket-ext-github"
-icon: "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
-
-api:
-  base_url: "{{EXTENSION_BASE_URL}}"
-  health_endpoint: "/health"
-  timeout_seconds: 30
-
-webhooks:
-  - event: "issue.transitioned"
-    endpoint: "/webhooks/kiket/issue_transitioned"
-    description: "Sync issue status changes to GitHub"
-
-  - event: "issue.created"
-    endpoint: "/webhooks/kiket/issue_created"
-    description: "Create GitHub issue when Kiket issue is created"
-
-  - event: "issue.commented"
-    endpoint: "/webhooks/kiket/issue_commented"
-    description: "Sync comments to GitHub issues"
-
-github_webhooks:
-  endpoint: "/webhooks/github"
-  events:
-    - "pull_request"
-    - "pull_request_review"
-    - "check_suite"
-    - "check_run"
-    - "issues"
-    - "issue_comment"
-    - "push"
-    - "create"
-    - "delete"
-    - "release"
-  secret_env: "GITHUB_WEBHOOK_SECRET"
-
-commands:
-  - id: "github.syncRepository"
-    title: "Sync GitHub Repository"
-    description: "Trigger a full sync of a GitHub repository"
-    category: "GitHub"
-
-  - id: "github.linkPR"
-    title: "Link Pull Request"
-    description: "Link a GitHub PR to this issue"
-    category: "GitHub"
-    context: "issue"
-
-  - id: "github.createIssue"
-    title: "Create GitHub Issue"
-    description: "Create a GitHub issue from this Kiket issue"
-    category: "GitHub"
-    context: "issue"
-
-  - id: "github.viewPR"
-    title: "View Linked PRs"
-    description: "View pull requests linked to this issue"
-    category: "GitHub"
-    context: "issue"
-
-  - id: "github.exportMetrics"
-    title: "Export PR Metrics"
-    description: "Export pull request metrics as CSV"
-    category: "GitHub"
-
-custom_data:
-  modules:
-    - github_data
-
-secrets:
-  - name: "GITHUB_APP_ID"
-    description: "GitHub App ID for authentication"
+model_version: "1.0"
+extension:
+  id: dev.kiket.ext.github
+  name: GitHub Integration
+  version: 1.0.0
+  description: GitHub integration for PR tracking, issue mirroring, and workflow automation
+  author: Kiket
+  homepage: https://github.com/kiket-dev/kiket-ext-github
+  icon: https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png
+  delivery: http
+  callback:
+    url: ${EXTENSION_BASE_URL}
+    secret: env.GITHUB_WEBHOOK_SECRET
+    timeout: 30000
     required: true
+  activationEvents:
+    - issue.transitioned
+    - issue.created
+    - issue.commented
+  permissions:
+    - issues:read
+    - issues:write
+    - comments:read
+    - comments:write
+    - projects:read
+  capabilities:
+    - issue-sync
+    - pull-requests
+    - webhooks
+    - version-control
+  hooks:
+    - event: issue.transitioned
+      endpoint: /webhooks/kiket/issue_transitioned
+      timeout: 5000
+      retries: 1
+      description: Sync issue status changes to GitHub
+    - event: issue.created
+      endpoint: /webhooks/kiket/issue_created
+      timeout: 5000
+      retries: 1
+      description: Create GitHub issue when Kiket issue is created
+    - event: issue.commented
+      endpoint: /webhooks/kiket/issue_commented
+      timeout: 5000
+      retries: 1
+      description: Sync comments to GitHub issues
+  contributes:
+    commands:
+      - command: github.syncRepository
+        title: Sync GitHub Repository
+        description: Trigger a full sync of a GitHub repository
+        category: GitHub
+        icon: bi-arrow-repeat
+        keywords: ["github", "sync", "repository"]
+        handler:
+          type: extension_event
+          event: github.syncRepository
+      - command: github.linkPR
+        title: Link Pull Request
+        description: Link a GitHub PR to this issue
+        category: GitHub
+        icon: bi-git
+        keywords: ["github", "pr", "link"]
+        context: issue
+        handler:
+          type: extension_event
+          event: github.linkPR
+      - command: github.createIssue
+        title: Create GitHub Issue
+        description: Create a GitHub issue from this Kiket issue
+        category: GitHub
+        icon: bi-plus-circle
+        keywords: ["github", "issue", "create"]
+        context: issue
+        handler:
+          type: extension_event
+          event: github.createIssue
+      - command: github.viewPR
+        title: View Linked PRs
+        description: View pull requests linked to this issue
+        category: GitHub
+        icon: bi-box-arrow-up-right
+        keywords: ["github", "pr", "view"]
+        context: issue
+        handler:
+          type: extension_event
+          event: github.viewPR
+      - command: github.exportMetrics
+        title: Export PR Metrics
+        description: Export pull request metrics as CSV
+        category: GitHub
+        icon: bi-download
+        keywords: ["github", "metrics", "export"]
+        handler:
+          type: extension_event
+          event: github.exportMetrics
+  github_webhooks:
+    endpoint: /webhooks/github
+    events:
+      - pull_request
+      - pull_request_review
+      - check_suite
+      - check_run
+      - issues
+      - issue_comment
+      - push
+      - create
+      - delete
+      - release
+  custom_data:
+    modules:
+      - github_data
+  configuration:
+    # GitHub App Authentication
+    GITHUB_APP_ID:
+      type: string
+      secret: false
+      required: true
+      label: GitHub App ID
+      description: GitHub App ID for authentication
+      help_url: https://docs.github.com/en/developers/apps/building-github-apps/creating-a-github-app
+    GITHUB_APP_PRIVATE_KEY:
+      type: string
+      secret: true
+      required: true
+      label: Private Key (PEM)
+      description: GitHub App private key (PEM format)
+      multiline: true
+      help_url: https://docs.github.com/en/developers/apps/building-github-apps/authenticating-with-github-apps
+    GITHUB_WEBHOOK_SECRET:
+      type: string
+      secret: true
+      required: true
+      label: Webhook Signing Secret
+      description: Secret for verifying GitHub webhook signatures
+      auto_generate:
+        length: 32
+    GITHUB_INSTALLATION_ID:
+      type: string
+      secret: false
+      required: false
+      label: Installation ID
+      description: GitHub App installation ID for your organization
+    # Sync Settings
+    default_sync_mode:
+      type: string
+      default: "full"
+      label: Default Sync Mode
+      description: Default synchronization behavior for new repositories
+      options:
+        - { value: full, label: "Full Sync (Issues + PRs)" }
+        - { value: prs_only, label: "PRs Only" }
+        - { value: issues_only, label: "Issues Only" }
+        - { value: disabled, label: "Disabled" }
+    auto_link_commits:
+      type: boolean
+      default: "true"
+      label: Auto-link Commits
+      description: Automatically link commits to Kiket issues based on commit messages
+    pr_status_sync:
+      type: boolean
+      default: "true"
+      label: Sync PR Status
+      description: Keep PR checks and review status synchronized
+    webhook_retry_count:
+      type: integer
+      default: "3"
+      min: 0
+      max: 10
+      label: Webhook Retry Count
+      description: Number of times to retry failed webhook deliveries
+  rate_limiting:
+    requests_per_minute: 60
+    burst: 20
 
-  - name: "GITHUB_APP_PRIVATE_KEY"
-    description: "GitHub App private key (PEM format)"
-    required: true
-    secret: true
+  # Setup Wizard - guides users through extension configuration
+  setup:
+    # Step 1: GitHub App Credentials
+    - secrets:
+        title: Connect GitHub App
+        description: Enter your GitHub App credentials for secure API access
+        required: true
+        help_url: https://docs.github.com/en/developers/apps/building-github-apps/creating-a-github-app
+        collect:
+          - GITHUB_APP_ID
+          - GITHUB_APP_PRIVATE_KEY
 
-  - name: "GITHUB_WEBHOOK_SECRET"
-    description: "Secret for verifying GitHub webhook signatures"
-    required: true
-    secret: true
+    # Step 2: Webhook Secret (auto-generated)
+    - secrets:
+        title: Webhook Security
+        description: A secret for verifying GitHub webhook signatures
+        required: true
+        collect:
+          - GITHUB_WEBHOOK_SECRET
 
-  - name: "GITHUB_INSTALLATION_ID"
-    description: "GitHub App installation ID for your organization"
-    required: false
+    # Step 3: Repository Configuration
+    - configure:
+        title: Configure Sync Settings
+        description: Set up how GitHub data is synchronized
+        collect:
+          - default_sync_mode
+          - auto_link_commits
+          - pr_status_sync
 
-rate_limiting:
-  requests_per_minute: 60
-  burst: 20
+    # Step 4: Test Connection
+    - test:
+        title: Test Connection
+        description: Verify your GitHub App can access your repositories
+        action: github.testConnection
+        successMessage: Successfully connected to GitHub! Your app has access.
+        required: false
 
-dependencies:
-  - kiket_version: ">=1.0.0"
+    # Step 5: Webhook Setup Instructions
+    - info:
+        title: Complete Webhook Setup
+        content: |
+          ## Final Step: Configure GitHub Webhook
 
-permissions:
-  - scope: "issues"
-    actions: ["read", "write"]
-    description: "Required for issue mirroring and PR linking"
+          Add a webhook in your GitHub App settings:
 
-  - scope: "comments"
-    actions: ["read", "write"]
-    description: "Required for comment synchronization"
+          1. Go to your GitHub App settings
+          2. Under "Webhook", set the URL to:
+             ```
+             https://your-domain.kiket.dev/webhooks/github
+             ```
+          3. Paste the **Webhook Secret** you copied earlier
+          4. Select these events:
+             - Pull requests
+             - Pull request reviews
+             - Issues
+             - Issue comments
+             - Push
 
-  - scope: "projects"
-    actions: ["read"]
-    description: "Required for project-level repository configuration"
+          ### What's Next?
 
-settings:
-  - name: "default_sync_mode"
-    type: "select"
-    label: "Default Sync Mode"
-    description: "Default synchronization behavior for new repositories"
-    options:
-      - value: "full"
-        label: "Full Sync (Issues + PRs)"
-      - value: "prs_only"
-        label: "PRs Only"
-      - value: "issues_only"
-        label: "Issues Only"
-      - value: "disabled"
-        label: "Disabled"
-    default: "full"
+          - Link repositories in your project settings
+          - PRs will automatically be linked to issues
+          - Commit messages with issue keys will be tracked
+        links:
+          - label: GitHub App Settings
+            url: https://github.com/settings/apps
+            icon: gear
+          - label: Kiket Documentation
+            url: https://docs.kiket.dev/extensions/github
+            icon: book
 
-  - name: "auto_link_commits"
-    type: "boolean"
-    label: "Auto-link Commits"
-    description: "Automatically link commits to Kiket issues based on commit messages"
-    default: true
-
-  - name: "pr_status_sync"
-    type: "boolean"
-    label: "Sync PR Status"
-    description: "Keep PR checks and review status synchronized"
-    default: true
-
-  - name: "webhook_retry_count"
-    type: "number"
-    label: "Webhook Retry Count"
-    description: "Number of times to retry failed webhook deliveries"
-    default: 3
-    min: 0
-    max: 10
-
-tags:
-  - "integration"
-  - "github"
-  - "version-control"
-  - "pull-requests"
-  - "issue-tracking"
-
-hosting: internal
+  custom_data:
+    permissions:
+      - module: dev.kiket.ext.github.data
+        operations: [read, write]
+  assets:
+    icon: ./public/icon.svg
+  hosting: internal
+  tags:
+    - integration
+    - github
+    - version-control
+    - pull-requests
+    - issue-tracking

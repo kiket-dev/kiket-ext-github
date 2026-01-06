@@ -1,4 +1,4 @@
-module: github_data
+module: dev.kiket.ext.github.data
 version: "1.0"
 description: "GitHub integration data storage for repositories, PRs, issues, and sync state"
 

@@ -111,11 +111,12 @@ extension:
     modules:
       - github_data
   configuration:
-    # GitHub App Authentication
+    # GitHub App Authentication - org-wide credentials (shared across all projects)
     GITHUB_APP_ID:
       type: string
       secret: false
       required: true
+      scope: extension
       label: GitHub App ID
       description: GitHub App ID for authentication
       help_url: https://docs.github.com/en/developers/apps/building-github-apps/creating-a-github-app
@@ -123,6 +124,7 @@ extension:
       type: string
       secret: true
       required: true
+      scope: extension
       label: Private Key (PEM)
       description: GitHub App private key (PEM format)
       multiline: true
@@ -131,6 +133,7 @@ extension:
       type: string
       secret: true
       required: true
+      scope: extension
       label: Webhook Signing Secret
       description: Secret for verifying GitHub webhook signatures
       auto_generate:
@@ -139,6 +142,7 @@ extension:
       type: string
       secret: false
       required: false
+      scope: extension
       label: Installation ID
       description: GitHub App installation ID for your organization
     # Sync Settings

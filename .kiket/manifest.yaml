@@ -1,5 +1,6 @@
 model_version: "1.0"
 extension:
+  sdk: ruby
   id: dev.kiket.ext.github
   name: GitHub Integration
   version: 1.0.0

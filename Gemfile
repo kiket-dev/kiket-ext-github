@@ -4,8 +4,10 @@ source "https://rubygems.org"
 
 ruby "~> 3.4"
 
-gem "sinatra", "~> 4.1"
-gem "puma", "~> 6.4"
+# Kiket SDK for extension development
+gem "kiket-sdk", github: "kiket-dev/kiket-ruby-sdk", branch: "main"
+
+# GitHub API client
 gem "octokit", "~> 9.0"
 gem "jwt", "~> 2.8"
 
@@ -14,5 +16,5 @@ group :development, :test do
   gem "rack-test", "~> 2.1"
   gem "webmock", "~> 3.23"
   gem "vcr", "~> 6.2"
-  gem "rubocop", "~> 1.60", require: false
+  gem "rubocop", "~> 1.69", require: false
 end

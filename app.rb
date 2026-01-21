@@ -247,10 +247,12 @@ class GitHubExtension
   def handle_list_pull_requests(payload, _context)
     repo_key = payload['repository']
     state = payload['state']
+    author = payload['author']
 
     prs = @pull_requests.values
     prs = prs.select { |pr| pr[:repository] == repo_key } if repo_key
     prs = prs.select { |pr| pr[:state] == state } if state
+    prs = prs.select { |pr| pr[:author] == author } if author
 
     { pull_requests: prs }
   end
@@ -386,7 +388,7 @@ class GitHubExtension
                                     org_id: context[:auth][:org_id]
                                   })
 
-    { status: 'received', delivery_id: delivery_id }
+    { status: 'received', delivery_id: delivery_id, event_type: event_type }
   end
 
   def handle_list_webhook_deliveries(payload, _context)

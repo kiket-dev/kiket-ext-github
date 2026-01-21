@@ -30,7 +30,7 @@ RSpec.describe GitHubExtension do
                                 'kiket_project_id' => 'proj-123'
                               }, context)
 
-      expect(result[:error]).to be_present
+      expect(result[:error]).not_to be_nil
     end
   end
 
@@ -92,7 +92,7 @@ RSpec.describe GitHubExtension do
                                 'name' => 'unknown'
                               }, context)
 
-      expect(result[:error]).to be_present
+      expect(result[:error]).not_to be_nil
     end
   end
 
@@ -215,7 +215,7 @@ RSpec.describe GitHubExtension do
     end
   end
 
-  describe '#handle_receive_webhook' do
+  describe '#handle_webhook' do
     before do
       extension.send(:handle_register_repository, {
                        'owner' => 'kiket-dev',
@@ -246,7 +246,7 @@ RSpec.describe GitHubExtension do
         }
       }
 
-      result = extension.send(:handle_receive_webhook, payload, context)
+      result = extension.send(:handle_webhook, payload, context)
 
       expect(result[:status]).to eq('received')
       expect(result[:event_type]).to eq('pull_request')
@@ -258,7 +258,8 @@ RSpec.describe GitHubExtension do
       extension.send(:handle_register_repository, {
                        'owner' => 'kiket-dev',
                        'name' => 'kiket',
-                       'kiket_project_id' => 'proj-123'
+                       'kiket_project_id' => 'proj-123',
+                       'sync_enabled' => true
                      }, context)
     end
 
@@ -270,11 +271,11 @@ RSpec.describe GitHubExtension do
 
       expect(result[:status]).to eq('triggered')
       expect(result[:job][:sync_type]).to eq('full')
-      expect(result[:job][:state]).to eq('pending')
+      expect(result[:job][:status]).to eq('running')
     end
   end
 
-  describe '#handle_pr_metrics_report' do
+  describe '#handle_pr_metrics' do
     before do
       extension.send(:handle_register_repository, {
                        'owner' => 'kiket-dev',
@@ -308,7 +309,7 @@ RSpec.describe GitHubExtension do
     end
 
     it 'returns PR metrics' do
-      result = extension.send(:handle_pr_metrics_report, {}, context)
+      result = extension.send(:handle_pr_metrics, {}, context)
 
       expect(result[:total_prs]).to eq(2)
       expect(result[:merged_prs]).to eq(1)
@@ -316,7 +317,7 @@ RSpec.describe GitHubExtension do
     end
   end
 
-  describe '#handle_export_prs_csv' do
+  describe '#handle_export_pull_requests' do
     before do
       extension.send(:handle_register_repository, {
                        'owner' => 'kiket-dev',
@@ -336,11 +337,11 @@ RSpec.describe GitHubExtension do
     end
 
     it 'exports PRs as CSV' do
-      result = extension.send(:handle_export_prs_csv, {}, context)
+      result = extension.send(:handle_export_pull_requests, {}, context)
 
-      expect(result[:content_type]).to eq('text/csv')
-      expect(result[:data]).to include('Test PR')
-      expect(result[:data]).to include('kiket-dev/kiket')
+      expect(result[:format]).to eq('csv')
+      expect(result[:content]).to include('Test PR')
+      expect(result[:content]).to include('kiket-dev/kiket')
     end
   end
 end

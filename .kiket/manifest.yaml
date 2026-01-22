@@ -4,6 +4,7 @@ extension:
   id: dev.kiket.ext.github
   name: GitHub Integration
   version: 1.0.0
+  api_version: v1
   description: GitHub integration for PR tracking, issue mirroring, and workflow automation
   author: Kiket
   homepage: https://github.com/kiket-dev/kiket-ext-github

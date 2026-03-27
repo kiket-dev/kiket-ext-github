@@ -96,6 +96,38 @@ extension:
         handler:
           type: extension_event
           event: github.exportMetrics
+    workflow_actions:
+      - id: create_github_issue
+        name: Create GitHub Issue
+        icon: bi-github
+        description: Create a linked GitHub issue when entering a workflow state
+        handler:
+          type: extension_event
+          event: github.workflowAction.createIssue
+        parameters:
+          - key: repository
+            type: string
+            label: Repository
+            placeholder: "owner/repo"
+            required: true
+          - key: labels
+            type: string
+            label: Labels
+            placeholder: "bug, urgent"
+            required: false
+      - id: add_github_comment
+        name: Add GitHub Comment
+        icon: bi-chat-text
+        description: Post a comment on the linked GitHub issue
+        handler:
+          type: extension_event
+          event: github.workflowAction.addComment
+        parameters:
+          - key: message
+            type: string
+            label: Comment
+            placeholder: "Issue moved to {{issue.status}}"
+            required: true
   github_webhooks:
     endpoint: /webhooks/github
     events:

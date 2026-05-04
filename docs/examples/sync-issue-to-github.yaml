@@ -4,9 +4,9 @@ description: Create GitHub issues when Kiket issues are created, keeping them sy
 automations:
   - name: mirror_to_github
     trigger:
-      event: issue.created
+      event: case.created
       conditions:
-        - field: issue.type
+        - field: case.type
           operator: in
           value: [Bug, Task]
         - field: project.settings.github_repo
@@ -16,12 +16,12 @@ automations:
         command: github.createIssue
         params:
           repository: "{{ project.settings.github_repo }}"
-          title: "[{{ issue.key }}] {{ issue.title }}"
+          title: "[{{ case.key }}] {{ case.title }}"
           body: |
-            {{ issue.description }}
+            {{ case.description }}
 
             ---
-            *Synced from Kiket: [{{ issue.key }}]({{ issue.url }})*
+            *Synced from Kiket: [{{ case.key }}]({{ case.url }})*
           labels:
             - "from-kiket"
-            - "{{ issue.type | downcase }}"
+            - "{{ case.type | downcase }}"

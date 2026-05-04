@@ -16,9 +16,9 @@ extension:
     timeout: 30000
     required: true
   activationEvents:
-    - issue.transitioned
-    - issue.created
-    - issue.commented
+    - case.transitioned
+    - case.created
+    - case.commented
   permissions:
     - issues:read
     - issues:write
@@ -31,17 +31,17 @@ extension:
     - webhooks
     - version-control
   hooks:
-    - event: issue.transitioned
+    - event: case.transitioned
       endpoint: /webhooks/kiket/issue_transitioned
       timeout: 5000
       retries: 1
       description: Sync issue status changes to GitHub
-    - event: issue.created
+    - event: case.created
       endpoint: /webhooks/kiket/issue_created
       timeout: 5000
       retries: 1
       description: Create GitHub issue when Kiket issue is created
-    - event: issue.commented
+    - event: case.commented
       endpoint: /webhooks/kiket/issue_commented
       timeout: 5000
       retries: 1
@@ -63,7 +63,7 @@ extension:
         category: GitHub
         icon: bi-git
         keywords: ["github", "pr", "link"]
-        context: issue
+        context: case
         handler:
           type: extension_event
           event: github.linkPR
@@ -73,7 +73,7 @@ extension:
         category: GitHub
         icon: bi-plus-circle
         keywords: ["github", "issue", "create"]
-        context: issue
+        context: case
         handler:
           type: extension_event
           event: github.createIssue
@@ -83,7 +83,7 @@ extension:
         category: GitHub
         icon: bi-box-arrow-up-right
         keywords: ["github", "pr", "view"]
-        context: issue
+        context: case
         handler:
           type: extension_event
           event: github.viewPR
@@ -126,7 +126,7 @@ extension:
           - key: message
             type: string
             label: Comment
-            placeholder: "Issue moved to {{issue.status}}"
+            placeholder: "Issue moved to {{ case.status }}"
             required: true
   github_webhooks:
     endpoint: /webhooks/github

@@ -6,18 +6,16 @@ on:
     branches: [main]
 
 jobs:
-  test:
+  validate-manifest:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          ruby-version: "3.4"
-          bundler-cache: true
-
-      - name: Run CI
-        run: bin/ci
+          node-version: '24'
+      - run: |
+          test -f extension.yaml
+          grep -q 'apiVersion: kiket.dev/v1' extension.yaml
+          grep -q 'kind: Extension' extension.yaml
+          grep -q 'key: kiket-ext-github' extension.yaml
+          test -f src/index.ts

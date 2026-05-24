@@ -10,6 +10,10 @@
     ".": {
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
+    },
+    "./adapter": {
+      "import": "./dist/adapter.js",
+      "types": "./dist/adapter.d.ts"
     }
   },
   "scripts": {
@@ -19,7 +23,7 @@
     "lint": "biome check --diagnostic-level=error src/"
   },
   "dependencies": {
-    "@kiket/github-adapter": "workspace:*"
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.0.0",

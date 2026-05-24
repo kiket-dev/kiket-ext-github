@@ -1,10 +1,17 @@
 export {
-  derivePullRequestApproved,
-  extractCaseIdFromText,
   GITHUB_ADAPTER_EVIDENCE_TYPES,
   GITHUB_ADAPTER_SOURCE_EVENT_TYPES,
-  type GithubRawEventContext,
-  type NormalizedOperationalEventOutput,
   normalizeGithubRawEvent,
+} from './normalize.js';
+export type {
+  GithubOperationalEventType,
+  GithubRawEventContext,
+  NormalizedEvidenceOutput,
+  NormalizedIntentOutput,
+  NormalizedOperationalEventOutput,
+} from './types.js';
+export {
+  derivePullRequestApproved,
+  extractCaseIdFromText,
   resolveCaseId,
-} from '@kiket/github-adapter';
+} from './utils.js';

@@ -1,0 +1,30 @@
+apiVersion: kiket.dev/v1
+kind: Extension
+metadata:
+  key: github
+  name: GitHub Evidence Adapter
+  version: 1.0.0
+  description: Normalize GitHub PR, review, CI, and deployment webhooks into Kiket evidence.
+spec:
+  sourceSystem: github
+  ingestionScopes:
+    - raw-events:write
+    - evidence:write
+  sourceEventTypes:
+    - pull_request
+    - pull_request_review
+    - check_run
+    - deployment
+    - deployment_status
+    - issues
+    - issue_comment
+  evidenceTypes:
+    - pull_request
+    - pull_request_review
+    - check_run
+    - deployment
+    - github_issue
+    - issue_comment
+  retentionHints:
+    rawDays: 30
+    evidenceDays: 365

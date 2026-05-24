@@ -1,0 +1,30 @@
+{
+  "name": "@kiket/ext-github",
+  "version": "1.0.0",
+  "private": true,
+  "description": "GitHub evidence adapter for Kiket platform ingestion",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "check": "tsc --noEmit",
+    "test": "vitest run",
+    "lint": "biome check --diagnostic-level=error src/"
+  },
+  "dependencies": {
+    "@kiket/github-adapter": "workspace:*"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.0.0",
+    "@types/node": "^22.0.0",
+    "typescript": "^5.8.0",
+    "vitest": "^3.2.0"
+  }
+}

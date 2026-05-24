@@ -1,5 +1,7 @@
 *.gem
 *.rbc
+/node_modules/
+/dist/
 /.config
 /coverage/
 /InstalledFiles

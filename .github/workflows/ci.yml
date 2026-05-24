@@ -14,8 +14,8 @@ jobs:
         with:
           node-version: '24'
       - run: |
-          test -f extension.yaml
-          grep -q 'apiVersion: kiket.dev/v1' extension.yaml
-          grep -q 'kind: Extension' extension.yaml
-          grep -q 'key: kiket-ext-github' extension.yaml
+          test -f kiket-extension.yaml
+          grep -q 'apiVersion: kiket.dev/v1' kiket-extension.yaml
+          grep -q 'kind: Extension' kiket-extension.yaml
+          grep -q 'key: kiket-ext-github' kiket-extension.yaml
           test -f src/index.ts

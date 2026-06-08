@@ -1,9 +1,12 @@
 import { defineConfig } from 'vitest/config';
-import { vitestCiLowMemory } from '../../vitest.ci-low-memory';
 
 export default defineConfig({
   test: {
+    environment: 'node',
     include: ['tests/**/*.test.ts'],
-    ...vitestCiLowMemory(),
+    coverage: {
+      provider: 'v8',
+      include: ['src/**/*.ts'],
+    },
   },
 });
